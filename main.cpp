@@ -1,6 +1,7 @@
 #include <iostream>
 #include <conio.h>
 #include "board.h"
+#include "snake.h"
 
 int main() {
     auto lang = "C++";
@@ -10,7 +11,9 @@ int main() {
         std::cout << "i = " << i << std::endl;
     }
 
+    Snake initial = initialize(BOARD_WIDTH, BOARD_HEIGHT);
     printBoard();
+    std::cout << initial.head->position.x << " " << (initial.head->position).y << std::endl;
     std::cin.get();
     return 0;
 }
