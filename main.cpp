@@ -13,7 +13,17 @@ int main() {
 
     Snake initial = initialize(BOARD_WIDTH, BOARD_HEIGHT);
     printBoard();
-    std::cout << initial.head->position.x << " " << (initial.head->position).y << std::endl;
+    //printSnake(initial);
+    move(initial);
+    printSnake(initial);
+    move(initial);
+    printSnake(initial);
+    move(initial);
+    printSnake(initial);
+    move(initial);
+    printSnake(initial);
+    move(initial);
+    printSnake(initial);
     std::cin.get();
     return 0;
 }
