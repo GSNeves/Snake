@@ -294,7 +294,7 @@ B->ε
    |   |    X% |       % | X -> \epsilon  |
    |   |     % |       % | aceita  |
 
-***E3
+*** E3
    LR(0):
 
    [[./resp_2022_2-E3-LR0.png]]
@@ -303,7 +303,7 @@ B->ε
 
    [[./resp_2022_2-E3-LR1.png]]
 
-***E4
+*** E4
 1. Não é LR(0) devido a conflito empilha-reduz no estado 6 (possui um item finalizado e este não está isolado)
 2. Não é SLR(1), pois 'f' pertence à Sequência(C) (por causa da produção A->bCf) e há presença de um empilhamento de 'f' que vai para o estado 8, logo no estado 6 há conflito empilha-reduz
 3. É LR(1), pois todos os itens finais estão em estados:
