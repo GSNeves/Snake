@@ -311,7 +311,7 @@ B->ε
 - ou cujos empilhamentos não estão no token de look-ahead (estado 6)
 - ou possuem tokens de look-ahead diferentes de outros estados finais (estado 7)
 
-***E5
+*** E5
 
    |   | Primeiro  | Sequência  |
    |---+----+----|
