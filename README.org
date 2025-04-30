@@ -294,6 +294,38 @@ B->ε
    |   |    X% |       % | X -> \epsilon  |
    |   |     % |       % | aceita  |
 
+***E3
+   LR(0):
+
+   [[./resp_2022_2-E3-LR0.png]]
+
+   LR(1):
+
+   [[./resp_2022_2-E3-LR1.png]]
+
+***E4
+1. Não é LR(0) devido a conflito empilha-reduz no estado 6 (possui um item finalizado e este não está isolado)
+2. Não é SLR(1), pois 'f' pertence à Sequência(C) (por causa da produção A->bCf) e há presença de um empilhamento de 'f' que vai para o estado 8, logo no estado 6 há conflito empilha-reduz
+3. É LR(1), pois todos os itens finais estão em estados:
+- ou que tem eles isolados (estados 1, 4, 5, 8)
+- ou cujos empilhamentos não estão no token de look-ahead (estado 6)
+- ou possuem tokens de look-ahead diferentes de outros estados finais (estado 7)
+
+***E5
+
+   |   | Primeiro  | Sequência  |
+   |---+----+----|
+   | S | u  | $ |
+   |---+----+----|
+   | B | v,ε | y,x,z  |
+   |---+----+----|
+   | D | x,y,ε  | z  |
+   |---+----+----|
+   | E |  y,ε  | x,z  |
+   |---+----+----|
+   | F |  x,ε  | z  |
+   |---+----+----|
+
 ** 2022/2 bis
 ** 2022/1
 ** 2021/2
