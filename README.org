@@ -1,0 +1,245 @@
+#+STARTUP: overview
+#+STARTUP: indent
+
+Em ordem cronológica reversa.
+
+PR são bem-vindos para popular esta página.
+
+* P1
+** 2024/2
+** 2023/2
+** 2023/1
+*** E1
+1. Sim, =a*|bc=.
+2. Não foi, sendo a principal razão o fato que o estado 4 une
+   diretamente os reconhecedores de =c= e =d=. Deveríamos ter uma
+   transição vazia entre o atual estado 4 e um novo estado que inicia
+   o reconhecimento do =c=. Podemos também mencionar a ausência da
+   marcação de um estado final, ainda que o estado =14= possa ser
+   considerado como final.
+3. Fech-\epsilon(0) = {0, 1, 2, 3, 6, 7, 8, 9, 10, 12, 13, 14} = A;
+4. Considerando que devemos aplicar o Fech-\epsilon após um movimento,
+   podemos entender que a resposta é Fech-\epsilon(Mov(A, a)) = {11, 12, 13,
+   14, 8, 9, 10};
+*** E2
+1. Podemos empregar [[https://github.com/schnorr/ellerre][ellerre]] para obter a resposta.
+   #+begin_src shell :results output :exports both
+   echo 'S => A B ;
+A => a | b | c C a | C ;
+B => a | b | ;
+C => b | c | d | ;' > gramatica.ee
+   ./firstfollow < gramatica.ee
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   Grammar with 12 rules and 8 symbols (4 non-terminals):
+   S ⇒ A B 
+   A ⇒ a 
+   A ⇒ b 
+   A ⇒ c C a 
+   A ⇒ C 
+   B ⇒ a 
+   B ⇒ b 
+   B ⇒ ε 
+   C ⇒ b 
+   C ⇒ c 
+   C ⇒ d 
+   C ⇒ ε 
+
+   First sets:
+   S -- ε b d a c 
+   A -- ε b d a c 
+   B -- ε b a 
+   C -- ε b d c 
+
+   Follow sets:
+   S -- $ 
+   A -- $ b a 
+   B -- $ 
+   C -- $ b a 
+   #+end_example
+
+2. Analisando a gramática fornecida, podemos concluir que a gramática
+   não é LL(1) pois (a) o conjunto Pri(cCa) tem intersecção com o
+   conjunto Pri(C), com o token =c=; (b) o conjunto Seq(C) tem
+   intersecção com o conjunto Pri(b).
+
+3. A tabela criada
+
+   |   | a  | b  | c   | d  | $  |
+   |---+----+----+-----+----+----|
+   | S | AB | AB | AB  | AB | AB |
+   |---+----+----+-----+----+----|
+   | A | a  | b  | cCa |    |    |
+   |   | C  | C  | C   | C  | C  |
+   |   |    | C  |     |    |    |
+   |---+----+----+-----+----+----|
+   | B | a  | b  |     |    | \epsilon  |
+   |---+----+----+-----+----+----|
+   | C |    | b  | c   | d  |    |
+   |   | \epsilon  | \epsilon  |     |    | \epsilon  |
+   |---+----+----+-----+----+----|
+
+4. Os passos são os seguintes (o =%= marca final da pilha e entrada)
+
+   | / |   <r> |     <r> | <l>     |
+   |   | Pilha | Entrada | Ação    |
+   |---+-------+---------+---------|
+   |   |   S % |       % | S -> AB |
+   |   |  AB % |       % | A -> C  |
+   |   |  CB % |       % | C -> \epsilon  |
+   |   |   B % |       % | B -> \epsilon  |
+   |   |     % |       % | aceita  |
+
+5. Os passos são os seguintes (idem com o =%=)
+
+   | / |   <r> |     <r> | <l>             |
+   |   | Pilha | Entrada | Ação            |
+   |---+-------+---------+-----------------|
+   |   |   S % |  acda % | S -> AB         |
+   |   |  AB % |  acda % | conflito entre  |
+   |   |       |         | A -> C e A -> a |
+
+*** E3
+
+1. Vamos empregar [[https://github.com/schnorr/ellerre][ellerre]] para obter a resposta.
+   #+begin_src shell :results output :exports both
+   echo 'S => a [ L ] | a ;
+L => S - L | S ;' > gramatica.ee
+   ./lr0 < gramatica.ee > /dev/null
+   ./firstfollow < gramatica.ee
+   dot -Tpng LR0.dot -o resp_2023_1-E3-LR0.png
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   Grammar with 4 rules and 6 symbols (2 non-terminals):
+   S ⇒ a [ L ] 
+   S ⇒ a 
+   L ⇒ S - L 
+   L ⇒ S 
+
+   First sets:
+   S -- a 
+   L -- a 
+
+   Follow sets:
+   S -- $ ] - 
+   L -- ] 
+   #+end_example
+
+   Considere que na resposta poderíamos ter apenas os estados do 0 ao 3.
+
+   [[./resp_2023_1-E3-LR0.png]]
+
+2. A gramática não é LR(0) pois nos estados 2 e 4 temos itens
+   completos junto com itens de empilhamento. Em LR(0) isso não é
+   possível pois acaba por causar um conflito empilha-reduz.
+
+3. No caso do estado 2, a heurística de usar o conjunto sequência do
+   símbolo para o qual iremos reduzir resolve o conflito pois Seq(S)
+   contém apenas =a=, e não temos transição com =a= a partir do
+   estado 2. A mesma justificativa pode ser usado no estado 4 ao
+   observar o Seq(L).
+
+*** E4
+
+1. A gramática não é LR(0) pois no esado 4 temos um conflito
+   empilha-reduz ao observar um item completo juntamente com um item
+   que implica em empilhamento.
+   
+2. Para responder se a gramática é SLR(1), precisamos do conjunto
+   sequência dos NTs. Vamos empregar [[https://github.com/schnorr/ellerre][ellerre]] para obter a resposta.
+   #+begin_src shell :results output :exports both
+   echo 'F => [ a ] | [ a ] - F ;' > gramatica.ee
+   ./firstfollow < gramatica.ee
+   #+end_src
+
+   #+RESULTS:
+   : Grammar with 2 rules and 5 symbols (1 non-terminals):
+   : F ⇒ [ a ] 
+   : F ⇒ [ a ] - F 
+   : 
+   : First sets:
+   : F -- [ 
+   : 
+   : Follow sets:
+   : F -- $ 
+
+   Observamos que no conjunto Seq(F) temos apenas o $, portanto a
+   gramática é SLR(1) uma vez que o conflito empilha-reduz do estado 4
+   desaparece visto que a redução para F só ocorrerá com =$= na entrada.
+
+3. A tabela SLR(1), usando a heurística do conjunto sequência na redução
+
+   | / |   | < |   |   |   | >      |   |
+   |   |   | [ | a | ] | - | $      | F |
+   |---+---+---+---+---+---+--------+---|
+   |   | 0 | 2 |   |   |   |        | 1 |
+   |   | 1 |   |   |   |   | aceita |   |
+   |   | 2 |   | 3 |   |   |        |   |
+   |   | 3 |   |   | 4 |   |        |   |
+   |   | 4 |   |   |   | 5 | R      |   |
+   |   | 5 | 2 |   |   |   |        | 6 |
+   |   | 6 |   |   |   |   | R      |   |
+
+4. A análise LR usando a tabela SLR(1) acima. Novamente o =%= marca o
+   final da pilha e da entrada.
+
+   | / | <l>               |       <r> |                                                               |
+   |   | Pilha             |   Entrada |                                                          Ação |
+   |   | % 0               | [a]-[a] % |                                                             2 |
+   |   | % 0 2             |  a]-[a] % |                                                             3 |
+   |   | % 0 2 3           |   ]-[a] % |                                                             4 |
+   |   | % 0 2 3 4         |    -[a] % |                                                             5 |
+   |   | % 0 2 3 4 5       |     [a] % |                                                             2 |
+   |   | % 0 2 3 4 5 2     |      a] % |                                                             3 |
+   |   | % 0 2 3 4 5 2 3   |       ] % |                                                             4 |
+   |   | % 0 2 3 4 5 2 3 4 |         % |                                                R por F -> [a] |
+   |   | % 0 2 3 4 5       |         % |     desempilha três estados (pois são três símbolos no corpo) |
+   |   | % 0 2 3 4 5       |         % | Como voltamos para o estado 5 e acabamos de reduzir para F, 6 |
+   |   | % 0 2 3 4 5 6     |         % |                                              R por F -> [a]-F |
+   |   | % 0               |         % |    desempilha cinco estado (pois são cinco símbolos no corpo) |
+   |   | % 0               |         % | Como voltamos para o estado 0 e acabamos de reduzir para F, 1 |
+   |   | % 0 1             |         % | aceita                                                        |
+
+
+*** E5
+
+1. A gramática não é LR(1) pois no estado 4 temos um conflito
+   empilha-reduz com =a=, uma vez que temos um item completo indicando
+   redução com =a= ao mesmo que temos que temos uma transição com =a=.
+
+** 2022/2
+*** E1
+
+1. Sim, os estados que reconhecem os caracteres 'a', 'b' e 'c' estão devidamente isolados com produções vazias, possuindo um alternância entre 'ab' e 'c' e então um laço de repetição
+
+2. 
+#+RESULTS:
+#+begin_example
+Fech-\epsilon (1) = {1, 2, 3, 7} = |A|
+Mov(A, a) = {4, 5} = |B|
+Mov(A, b) = {}
+Mov(A, c) = {8, 9, >10<, 1, 2, 3, 7} = |C|
+Mov(B, a) = {}
+Mov(B, b) = {6, 9, >10<, 1, 2, 3, 7} = |D|
+Mov(B, c) = {}
+Mov(C, a) = {4, 5} = |B|
+Mov(C, b) = {}
+Mov(C, c) = {8, 9, >10<, 1, 2, 3, 7} = |C|
+Mov(D, a) = {4, 5} = |B|
+Mov(D, b) = {}
+Mov(D, c) = {8, 9, >10<, 1, 2, 3, 7} = |C|
+#+end_example
+
+Gerando o automato:
+
+   [[./resp_2022_2-E1-Automato.png]]
+** 2022/2 bis
+** 2022/1
+** 2021/2
+** 2019/2
+** 2018/2
+** 2017/2
