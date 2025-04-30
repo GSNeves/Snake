@@ -256,10 +256,10 @@ A->d
 #+begin_example
 A->bAX
 X->aX
-X->\epsilon
+X->ε
 A->dB
 B->cB
-B->\epsilon
+B->ε
 #+end_example
 
    Tabela LL(1):
@@ -276,7 +276,7 @@ B->\epsilon
    |---+----+----+-----+----+----|
 
    Passos Análise LL(1):
-   
+
    | / |   <r> |     <r> | <l>     |
    |   | Pilha | Entrada | Ação    |
    |---+-------+---------+---------|
