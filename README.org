@@ -237,6 +237,60 @@ Mov(D, c) = {8, 9, >10<, 1, 2, 3, 7} = |C|
 Gerando o automato:
 
    [[./resp_2022_2-E1-Automato.png]]
+
+*** E2
+1. 
+Recursão à esquerda:
+#+begin_example
+S->Sa
+A->Ac
+#+end_example
+
+O estado A teria 2 produções com o 'd' pois 'd' é parte de Primeiro(A)
+#+begin_example
+A->Ac
+A->d
+#+end_example
+
+2.
+#+begin_example
+A->bAX
+X->aX
+X->\epsilon
+A->dB
+B->cB
+B->\epsilon
+#+end_example
+
+
+   |   | a  | b  | c   | d  | $  |
+   |---+----+----+-----+----+----|
+   | S |    | bAX|     |    |    |
+   |---+----+----+-----+----+----|
+   | X | aX |    |     |    | \epsilon   |
+   |---+----+----+-----+----+----|
+   | A |    |    |     | dB |    |
+   |---+----+----+-----+----+----|
+   | B |  \epsilon  | b  | cB   |   |  \epsilon  |
+   |---+----+----+-----+----+----|
+
+   | / |   <r> |     <r> | <l>     |
+   |   | Pilha | Entrada | Ação    |
+   |---+-------+---------+---------|
+   |   |   S%  |  bdcaa% | S -> bAX |
+   |   |  bAX% |  bdcaa% | casa  |
+   |   |   AX% |   dcaa% | A -> dB  |
+   |   |  dBX% |   dcaa% | casa  |
+   |   |   BX% |    caa% | B -> cB  |
+   |   |  cBX% |    caa% | casa  |
+   |   |   BX% |     aa% | B -> \epsilon  |
+   |   |    X% |     aa% | X -> aX  |
+   |   |   aX% |     aa% | casa  |
+   |   |    X% |      a% | X -> aX  |
+   |   |   aX% |      a% | casa  |
+   |   |    X% |       % | X -> \epsilon  |
+   |   |     % |       % | aceita  |
+
 ** 2022/2 bis
 ** 2022/1
 ** 2021/2
