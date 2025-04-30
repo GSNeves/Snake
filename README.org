@@ -262,6 +262,7 @@ B->cB
 B->\epsilon
 #+end_example
 
+   Tabela LL(1):
 
    |   | a  | b  | c   | d  | $  |
    |---+----+----+-----+----+----|
@@ -274,6 +275,8 @@ B->\epsilon
    | B |  \epsilon  | b  | cB   |   |  \epsilon  |
    |---+----+----+-----+----+----|
 
+   Passos Análise LL(1):
+   
    | / |   <r> |     <r> | <l>     |
    |   | Pilha | Entrada | Ação    |
    |---+-------+---------+---------|
